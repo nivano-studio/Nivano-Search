@@ -60,7 +60,9 @@ export async function runScraper(query, state, city, limit, blocklist = [], onPr
     });
 
     onProgress({ type: 'status', message: `Buscando no Google Maps por: "${searchQuery}"` });
-    await page.goto(searchUrl, { waitUntil: 'networkidle2', timeout: 60000 });
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    // Espera o carregamento inicial da lista lateral
+    await new Promise(r => setTimeout(r, 5000));
 
     onProgress({ type: 'status', message: 'Rolando lista e filtrando empresas já capturadas...' });
     
@@ -208,8 +210,9 @@ async function scrollAndCollectLinks(page, limit, blocklist, onProgress) {
  * Coleta detalhes básicos da empresa na página do Google Maps
  */
 async function scrapeBusinessDetails(page, url) {
-  await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-  await new Promise(r => setTimeout(r, 2000));
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  // Espera um curto período para a renderização dos elementos estáticos e reativos da ficha
+  await new Promise(r => setTimeout(r, 4000));
 
   return await page.evaluate((businessUrl) => {
     const nameEl = document.querySelector('h1');
