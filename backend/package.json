@@ -1,0 +1,15 @@
+{
+  "name": "nivano-search-backend",
+  "version": "1.0.0",
+  "description": "Backend scraper para o Nivano Search",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "puppeteer": "^22.12.0"
+  }
+}
