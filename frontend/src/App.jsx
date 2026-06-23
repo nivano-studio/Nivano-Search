@@ -359,7 +359,309 @@ function generateReportHTML(lead, yourName, yourContact, customProposal) {
   `;
 }
 
+// Função para gerar o HTML do Relatório Comercial exclusivo de Instagram (Pink/Rose Theme para Impressão)
+function generateInstagramReportHTML(lead, yourName, yourContact, customProposal) {
+  const dateStr = new Date().toLocaleDateString('pt-BR');
+  const logoUrl = typeof window !== 'undefined' ? window.location.origin + '/nivano-logo.jpg' : '';
+  const metrics = lead.instagramMetrics || { username: 'usuario', followers: 'N/A', following: 'N/A', posts: 'N/A' };
+  
+  const positives = [];
+  const negatives = [];
+  
+  let followersCount = 0;
+  if (metrics.followers !== 'N/A') {
+    const cleanStr = metrics.followers.replace(/[.\s]/g, '').replace(',', '.');
+    if (cleanStr.includes('K')) {
+      followersCount = parseFloat(cleanStr) * 1000;
+    } else if (cleanStr.includes('M')) {
+      followersCount = parseFloat(cleanStr) * 1000000;
+    } else {
+      followersCount = parseInt(cleanStr) || 0;
+    }
+
+    if (followersCount >= 1000) positives.push(`Audiência comercial ativa (${metrics.followers} seguidores).`);
+    else negatives.push(`Perfil com poucos seguidores (${metrics.followers}). Dificulta o alcance orgânico local.`);
+  }
+
+  let postsCount = 0;
+  if (metrics.posts !== 'N/A') {
+    postsCount = parseInt(metrics.posts.replace(/\D/g, '')) || 0;
+    if (postsCount >= 15) positives.push(`Histórico consolidado com ${metrics.posts} publicações.`);
+    else negatives.push(`Volume baixo de posts (${metrics.posts} publicados). Transmite imagem de inatividade.`);
+  }
+
+  const positivesHTML = positives.map(p => `<li>✅ ${p}</li>`).join('');
+  const negativesHTML = negatives.map(n => `<li>❌ ${n}</li>`).join('');
+
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Auditoria de Instagram - @${metrics.username}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #334155;
+      background: #f8fafc;
+      margin: 0;
+      padding: 30px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      border: 1px solid #e2e8f0;
+    }
+    .header {
+      border-bottom: 3px solid #ec4899;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .header-title p {
+      margin: 5px 0 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+    .date-badge {
+      background: #fdf2f8;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #be185d;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .metric-card {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+    }
+    .metric-card h3 {
+      margin: 0;
+      font-size: 12px;
+      color: #be185d;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-card p {
+      margin: 8px 0 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #9f1239;
+    }
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 15px;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+    .list-pos, .list-neg {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .list-pos li, .list-neg li {
+      margin-bottom: 10px;
+      font-size: 13.5px;
+    }
+    .opt-box {
+      border-left: 4px solid #ec4899;
+      background: #fff5f5;
+      padding: 15px 20px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 15px;
+    }
+    .opt-box h3 {
+      margin-top: 0;
+      margin-bottom: 6px;
+      font-size: 14.5px;
+      color: #9f1239;
+    }
+    .opt-box p {
+      margin: 0;
+      font-size: 13px;
+      color: #881337;
+    }
+    .pitch-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 20px;
+      font-family: inherit;
+      white-space: pre-wrap;
+      font-size: 13.5px;
+      color: #334155;
+      margin-bottom: 30px;
+    }
+    .actions-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .btn-print {
+      background: #ec4899;
+      color: white;
+    }
+    .btn-close {
+      background: #e2e8f0;
+      color: #475569;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .actions-bar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <img src="${logoUrl}" alt="Nivano" style="height: 50px; border-radius: 8px;" />
+        <div class="header-title">
+          <h1>Relatório de Auditoria de Instagram</h1>
+          <p>Diagnóstico Técnico do Perfil Público: <strong>@${metrics.username}</strong></p>
+        </div>
+      </div>
+      <div class="date-badge">Data: ${dateStr}</div>
+    </div>
+
+    <!-- Métricas do Instagram -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <h3>Seguidores</h3>
+        <p>${metrics.followers}</p>
+      </div>
+      <div class="metric-card">
+        <h3>Seguindo</h3>
+        <p>${metrics.following}</p>
+      </div>
+      <div class="metric-card">
+        <h3>Publicações</h3>
+        <p>${metrics.posts}</p>
+      </div>
+    </div>
+
+    <!-- Diagnóstico SWOT -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+      <div class="card" style="border-top: 4px solid #22c55e; margin-bottom: 0;">
+        <h2>Pontos Positivos (Forças)</h2>
+        <ul class="list-pos">
+          ${positivesHTML || '<li>Nenhuma métrica forte identificada no escaneamento automático.</li>'}
+        </ul>
+      </div>
+      <div class="card" style="border-top: 4px solid #ef4444; margin-bottom: 0;">
+        <h2>Pontos Críticos (Melhorias urgentes)</h2>
+        <ul class="list-neg">
+          ${negativesHTML || '<li>Perfil bem posicionado nas métricas analisadas.</li>'}
+        </ul>
+      </div>
+    </div>
+
+    <!-- Recomendações de Conteúdo e Conversão -->
+    <div class="card">
+      <h2 style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 15px;">🚀 Oportunidades de Otimização no Perfil</h2>
+      
+      <div class="opt-box">
+        <h3>1. Estruturação da Biografia (Bio de Alta Conversão)</h3>
+        <p>
+          • <strong>Frase de Impacto:</strong> A primeira linha deve responder imediatamente "Qual problema você resolve para o cliente".<br>
+          • <strong>Chamada para Ação (CTA):</strong> Terminar a bio com um comando claro apontando para o link (ex: "Clique no link e fale conosco no WhatsApp").
+        </p>
+      </div>
+
+      <div class="opt-box" style="border-left-color: #db2777; background: #fdf2f8;">
+        <h3>2. Funil de Vendas Automático (Direct / ManyChat)</h3>
+        <p>
+          • <strong>Palavras-chave:</strong> Configurar respostas automáticas sempre que alguém comentar "QUERO" nos posts ou Reels.<br>
+          • <strong>Atendimento Instantâneo:</strong> Reduzir o tempo de resposta do Direct para menos de 1 minuto, convertendo visitantes em contatos comerciais diretamente no WhatsApp.
+        </p>
+      </div>
+    </div>
+
+    <!-- Proposta Parceria -->
+    <div class="card" style="margin-bottom: 0;">
+      <h2>✉️ Sugestão de Abordagem Comercial</h2>
+      <div class="pitch-box">${customProposal}</div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="actions-bar">
+      <button class="btn btn-close" onclick="window.close()">Fechar</button>
+      <button class="btn btn-print" onclick="window.print()">Imprimir / Salvar PDF</button>
+    </div>
+  </div>
+  <script>
+    window.onload = function() {
+      setTimeout(() => { window.print(); }, 800);
+    }
+  </script>
+</body>
+</html>
+  `;
+}
+
 function App() {
+  // Modos de Operação
+  const [activeMode, setActiveMode] = useState('maps'); // 'maps' | 'instagram'
+  const [instaInput, setInstaInput] = useState('');
+  const [instaReportData, setInstaReportData] = useState(null);
+  const [isInstaLoading, setIsInstaLoading] = useState(false);
+  const [instaLogs, setInstaLogs] = useState([]);
+
   // Estados para o formulário de busca
   const [statesList, setStatesList] = useState([]);
   const [selectedUf, setSelectedUf] = useState('');
@@ -680,6 +982,73 @@ function App() {
     window.open(waUrl, '_blank');
   };
 
+  // Funções para Auditoria Standalone de Instagram
+  const handleStandaloneInstaSearch = async (e) => {
+    e.preventDefault();
+    if (!instaInput) return;
+
+    setIsInstaLoading(true);
+    setInstaLogs(['[SISTEMA]: Inicializando análise do Instagram...', '[SISTEMA]: Limpando e higienizando URL...']);
+    setInstaReportData(null);
+
+    const sanitizedUrl = cleanInstagramUrl(instaInput);
+    if (!sanitizedUrl) {
+      alert('Por favor, insira um link ou nome de usuário válido do Instagram.');
+      setIsInstaLoading(false);
+      return;
+    }
+
+    setInstaLogs(prev => [...prev, `[SISTEMA]: Carregando dados públicos de @${extractInstagramUsername(sanitizedUrl)}...`]);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/analyze-instagram`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ instagramUrl: sanitizedUrl })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setInstaReportData(data.lead);
+        const pitch = generateCustomPitch(data.lead);
+        setProposalText(pitch);
+        setInstaLogs(prev => [...prev, '[SISTEMA]: Auditoria de Instagram gerada com sucesso!']);
+      } else {
+        alert('Erro ao analisar Instagram: ' + data.error);
+        setInstaLogs(prev => [...prev, `[ERRO]: ${data.error}`]);
+      }
+    } catch (err) {
+      alert('Erro de comunicação com o servidor backend: ' + err.message);
+      setInstaLogs(prev => [...prev, `[ERRO]: ${err.message}`]);
+    } finally {
+      setIsInstaLoading(false);
+    }
+  };
+
+  const handleDownloadStandaloneReport = () => {
+    if (!instaReportData) return;
+    const htmlReport = generateInstagramReportHTML(instaReportData, yourName, yourContact, proposalText);
+    
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+      newWindow.document.write(htmlReport);
+      newWindow.document.close();
+    } else {
+      alert('Por favor, autorize popups para abrir a janela de visualização do relatório.');
+    }
+  };
+
+  const handleCopyStandaloneProposal = () => {
+    navigator.clipboard.writeText(proposalText);
+    alert('Proposta copiada para a área de transferência!');
+  };
+
+  const handleSendStandaloneWhatsApp = () => {
+    if (!instaReportData) return;
+    const text = proposalText;
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, '_blank');
+  };
+
   return (
     <div className="app-container">
       {/* Top Header */}
@@ -691,13 +1060,32 @@ function App() {
             <p>Encontre leads qualificados no Google Maps 100% de graça</p>
           </div>
         </div>
-        <span className="badge-free">API Free & Sem Custos</span>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="mode-toggle">
+            <button 
+              className={`mode-btn ${activeMode === 'maps' ? 'active' : ''}`}
+              onClick={() => setActiveMode('maps')}
+            >
+              🏢 Captação Maps
+            </button>
+            <button 
+              className={`mode-btn ${activeMode === 'instagram' ? 'active' : ''}`}
+              onClick={() => setActiveMode('instagram')}
+            >
+              📸 Diagnóstico Instagram
+            </button>
+          </div>
+          <span className="badge-free">API Free & Sem Custos</span>
+        </div>
       </header>
 
       {/* Grid Central */}
       <div className="dashboard-grid">
-        {/* Painel Esquerdo: Busca e Console */}
-        <aside className="card-premium">
+        {activeMode === 'maps' ? (
+          <>
+            {/* Painel Esquerdo: Busca e Console */}
+            <aside className="card-premium">
           <div className="card-title">
             <Search size={20} className="text-primary" />
             Configuração de Busca
@@ -961,7 +1349,223 @@ function App() {
             </div>
           )}
         </main>
-      </div>
+      </>
+    ) : (
+      <>
+        {/* Painel Esquerdo: Auditoria de Instagram */}
+        <aside className="card-premium">
+          <div className="card-title">
+            <Instagram size={20} className="text-insta" />
+            Auditoria de Instagram
+          </div>
+          
+          <form onSubmit={handleStandaloneInstaSearch}>
+            <div className="form-group">
+              <label>Link ou @Username do Instagram</label>
+              <input 
+                type="text" 
+                className="input-premium" 
+                placeholder="Ex: @labellapizzaepetiscos ou URL"
+                value={instaInput}
+                onChange={(e) => setInstaInput(e.target.value)}
+                disabled={isInstaLoading}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Seu Nome (Consultor)</label>
+              <input 
+                type="text" 
+                className="input-premium" 
+                placeholder="Seu nome para a proposta"
+                value={yourName}
+                onChange={(e) => setYourName(e.target.value)}
+                disabled={isInstaLoading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Seu Contato (WhatsApp/Celular)</label>
+              <input 
+                type="text" 
+                className="input-premium" 
+                placeholder="Seu telefone"
+                value={yourContact}
+                onChange={(e) => setYourContact(e.target.value)}
+                disabled={isInstaLoading}
+              />
+            </div>
+
+            {!isInstaLoading ? (
+              <button type="submit" className="btn-primary" style={{ background: '#ec4899' }}>
+                <Search size={18} />
+                Gerar Diagnóstico
+              </button>
+            ) : (
+              <button type="button" className="btn-primary" style={{ background: 'var(--border-focus)' }} disabled>
+                <RefreshCw size={18} className="animate-spin" />
+                Analisando Perfil...
+              </button>
+            )}
+          </form>
+
+          {/* Console de Auditoria */}
+          {(isInstaLoading || instaLogs.length > 0) && (
+            <div className="console-panel">
+              <div className="console-title">
+                Status da Auditoria
+                {isInstaLoading && <span className="pulse-dot" style={{ background: '#ec4899' }}></span>}
+              </div>
+              <div className="console-box">
+                {instaLogs.map((log, i) => (
+                  <div key={i} className="console-line success">
+                    {log}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+
+        {/* Painel Direito: Resultados e Diagnóstico */}
+        <main className="main-content">
+          {!instaReportData ? (
+            <div className="empty-state">
+              <Instagram size={64} className="text-insta" style={{ color: '#ec4899', animation: 'float 3s ease-in-out infinite' }} />
+              <h3>Diagnóstico de Perfil Pronto para Vendas</h3>
+              <p>Insira a URL ou @username de um perfil de Instagram no menu ao lado e clique em **Gerar Diagnóstico**.</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+                O sistema lerá as métricas de engajamento do perfil de forma 100% gratuita, gerará uma análise SWOT completa e montará um roteiro de abordagem personalizado.
+              </p>
+            </div>
+          ) : (
+            <div className="card-premium" style={{ height: '100%', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+                <div>
+                  <h2 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#ffffff', margin: 0 }}>
+                    Auditoria do Instagram: @{instaReportData.instagramMetrics.username}
+                  </h2>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.25rem 0 0 0' }}>
+                    Métricas e análise de vendas para o perfil
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button 
+                    className="lead-btn" 
+                    style={{ background: '#ec4899', color: '#ffffff' }}
+                    onClick={handleDownloadStandaloneReport}
+                  >
+                    <Download size={16} /> Relatório PDF
+                  </button>
+                  {yourContact && (
+                    <button 
+                      className="lead-btn" 
+                      style={{ background: '#22c55e', color: '#ffffff' }}
+                      onClick={handleSendStandaloneWhatsApp}
+                    >
+                      <Send size={16} /> WhatsApp
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Grid de Métricas */}
+              <div className="metrics-summary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div className="metric-box" style={{ background: '#09090b', border: '1px solid var(--border)', padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Seguidores</span>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#ec4899', margin: '0.5rem 0 0 0' }}>
+                    {instaReportData.instagramMetrics.followers}
+                  </h3>
+                </div>
+                <div className="metric-box" style={{ background: '#09090b', border: '1px solid var(--border)', padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Seguindo</span>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#ffffff', margin: '0.5rem 0 0 0' }}>
+                    {instaReportData.instagramMetrics.following}
+                  </h3>
+                </div>
+                <div className="metric-box" style={{ background: '#09090b', border: '1px solid var(--border)', padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Publicações</span>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#ffffff', margin: '0.5rem 0 0 0' }}>
+                    {instaReportData.instagramMetrics.posts}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="modal-section-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                {/* SWOT Forças */}
+                <div className="swot-column">
+                  <h4 style={{ color: '#22c55e', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontWeight: '600', fontSize: '0.9rem' }}>
+                    <CheckCircle2 size={16} /> Pontos Positivos
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {instaReportData.opportunities.filter(o => o.severity === 'low').map((opp, idx) => (
+                      <div key={idx} className="opportunity-item info" style={{ background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.85rem' }}>
+                        <strong>{opp.title}</strong>: {opp.description}
+                      </div>
+                    ))}
+                    {instaReportData.opportunities.filter(o => o.severity === 'low').length === 0 && (
+                      <div className="opportunity-item info" style={{ background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.85rem' }}>
+                        ✅ Nenhuma falha estrutural de engajamento detectada.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* SWOT Oportunidades / Fraquezas */}
+                <div className="swot-column">
+                  <h4 style={{ color: 'var(--danger)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', fontWeight: '600', fontSize: '0.9rem' }}>
+                    <XCircle size={16} /> Oportunidades de Venda
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {instaReportData.opportunities.filter(o => o.severity !== 'low').map((opp, idx) => {
+                      let styleClass = 'danger';
+                      if (opp.severity === 'medium') styleClass = 'warning';
+                      
+                      const bg = opp.severity === 'medium' ? 'rgba(234, 179, 8, 0.05)' : 'rgba(239, 68, 68, 0.05)';
+                      const border = opp.severity === 'medium' ? '1px solid rgba(234, 179, 8, 0.1)' : '1px solid rgba(239, 68, 68, 0.1)';
+                      const color = opp.severity === 'medium' ? '#eab308' : 'var(--danger)';
+                      
+                      return (
+                        <div key={idx} className={`opportunity-item ${styleClass}`} style={{ background: bg, border: border, color: color, padding: '0.75rem', borderRadius: '8px', fontSize: '0.85rem' }}>
+                          <strong>{opp.title}</strong>: {opp.description}
+                        </div>
+                      );
+                    })}
+                    {instaReportData.opportunities.filter(o => o.severity !== 'low').length === 0 && (
+                      <div className="opportunity-item info" style={{ background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.1)', padding: '0.75rem', borderRadius: '8px', fontSize: '0.85rem' }}>
+                        🚀 Perfil excelente. Foque em oferecer tráfego pago avançado!
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Proposta / Script */}
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <h4 style={{ margin: 0, fontWeight: '600', color: '#ffffff', fontSize: '0.95rem' }}>Proposta Comercial Gerada</h4>
+                  <button 
+                    className="lead-btn" 
+                    style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
+                    onClick={handleCopyStandaloneProposal}
+                  >
+                    <Copy size={12} /> Copiar Proposta
+                  </button>
+                </div>
+                <textarea 
+                  className="proposal-textbox"
+                  value={proposalText}
+                  onChange={(e) => setProposalText(e.target.value)}
+                  style={{ minHeight: '180px', background: '#09090b', border: '1px solid var(--border)' }}
+                />
+              </div>
+            </div>
+          )}
+        </main>
+      </>
+    )}
+  </div>
 
       {/* Modal de Relatório e Proposta */}
       {activeLead && (

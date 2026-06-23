@@ -68,15 +68,15 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Endpoint para re-analisar um Instagram sob demanda
+// Endpoint para re-analisar um Instagram sob demanda ou realizar auditoria avulsa
 app.post('/api/analyze-instagram', async (req, res) => {
   const { lead, instagramUrl } = req.body;
 
-  if (!lead || !instagramUrl) {
-    return res.status(400).json({ error: 'Os campos lead e instagramUrl são obrigatórios.' });
+  if (!instagramUrl) {
+    return res.status(400).json({ error: 'O campo instagramUrl é obrigatório.' });
   }
 
-  console.log(`Solicitação de re-análise do Instagram para: ${lead.name} -> ${instagramUrl}`);
+  console.log(`Solicitação de análise do Instagram para: ${lead ? lead.name : instagramUrl}`);
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -90,7 +90,18 @@ app.post('/api/analyze-instagram', async (req, res) => {
   try {
     const metrics = await getInstagramMetrics(browser, instagramUrl);
 
-    const updatedLead = { ...lead };
+    // Se o lead não existir, criamos um shell padrão focado no perfil
+    const baseLead = lead || {
+      name: `@${metrics.username}`,
+      url: instagramUrl,
+      category: 'Perfil de Instagram',
+      phone: '',
+      website: '',
+      address: '',
+      socials: { instagram: instagramUrl, facebook: '' }
+    };
+
+    const updatedLead = { ...baseLead };
     updatedLead.socials = updatedLead.socials || {};
     updatedLead.socials.instagram = instagramUrl;
     updatedLead.instagramMetrics = metrics;
@@ -100,7 +111,7 @@ app.post('/api/analyze-instagram', async (req, res) => {
 
     res.json({ success: true, lead: updatedLead });
   } catch (error) {
-    console.error('Erro ao re-analisar Instagram:', error);
+    console.error('Erro ao analisar Instagram:', error);
     res.status(500).json({ error: error.message || 'Falha no processamento.' });
   } finally {
     await browser.close();

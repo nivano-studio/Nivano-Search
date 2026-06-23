@@ -716,3 +716,38 @@ input, textarea {
   animation: float 4s ease-in-out infinite;
   object-fit: contain;
 }
+
+/* Mode toggles (Maps vs Instagram) */
+.mode-toggle {
+  display: flex;
+  background: #09090b;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mode-btn:hover {
+  color: #ffffff;
+}
+
+.mode-btn.active {
+  background: var(--border-focus);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+}
