@@ -27,6 +27,8 @@ import {
 } from 'lucide-react';
 import './App.css';
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+
 // Função para gerar o HTML do Relatório Comercial (White Theme para Impressão)
 function generateReportHTML(lead, yourName, yourContact, customProposal) {
   const dateStr = new Date().toLocaleDateString('pt-BR');
@@ -490,7 +492,7 @@ function App() {
     setLeads([]);
     setCurrentSearchCount(0);
 
-    const backendUrl = `http://localhost:3001/api/search?query=${encodeURIComponent(query)}&state=${selectedUf}&city=${encodeURIComponent(selectedCity)}&limit=${limit}`;
+    const backendUrl = `${API_BASE_URL}/api/search?query=${encodeURIComponent(query)}&state=${selectedUf}&city=${encodeURIComponent(selectedCity)}&limit=${limit}`;
     triggerScraperSSE(backendUrl, false);
   };
 
@@ -507,7 +509,7 @@ function App() {
     const blocklist = leads.map(l => l.url);
     const blocklistParam = encodeURIComponent(JSON.stringify(blocklist));
 
-    const backendUrl = `http://localhost:3001/api/search?query=${encodeURIComponent(query)}&state=${selectedUf}&city=${encodeURIComponent(selectedCity)}&limit=${limit}&blocklist=${blocklistParam}`;
+    const backendUrl = `${API_BASE_URL}/api/search?query=${encodeURIComponent(query)}&state=${selectedUf}&city=${encodeURIComponent(selectedCity)}&limit=${limit}&blocklist=${blocklistParam}`;
     triggerScraperSSE(backendUrl, true);
   };
 
@@ -629,7 +631,7 @@ function App() {
 
     setIsAnalyzingInsta(true);
     try {
-      const response = await fetch('http://localhost:3001/api/analyze-instagram', {
+      const response = await fetch(`${API_BASE_URL}/api/analyze-instagram`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lead: activeLead, instagramUrl: sanitizedUrl })
